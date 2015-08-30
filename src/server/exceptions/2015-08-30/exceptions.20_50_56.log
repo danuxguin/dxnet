@@ -1,0 +1,21 @@
+
+===============================================================================
+EXCEPTION: "invalid memory address or nil pointer dereference"																			
+===============================================================================		
+/Users/daniel/work/gitproject/dxnet/src/lanstonetech.com/common/logger/logger.go:253 (0x8ebf6)
+	CatchException: string(debug.Stack()))
+/usr/local/go/src/runtime/asm_amd64.s:401 (0x3d475)
+	call16: CALLFN(·call16, 16)
+/usr/local/go/src/runtime/panic.go:387 (0x15158)
+	gopanic: reflectcall(unsafe.Pointer(d.fn), deferArgs(d), uint32(d.siz), uint32(d.siz))
+/usr/local/go/src/runtime/panic.go:42 (0x1447e)
+	panicmem: panic(memoryError)
+/usr/local/go/src/runtime/sigpanic_unix.go:26 (0x1a9e0)
+	sigpanic: panicmem()
+/Users/daniel/work/gitproject/dxnet/src/lanstonetech.com/network/session.go:22 (0x8e267)
+	(*Session).RecvMSG: msg.Data = make([]byte, MAX_PACKAGE_LEN)
+/Users/daniel/work/gitproject/dxnet/src/lanstonetech.com/server/server.go:65 (0x45e1c)
+	(*server).handlerConnection: msg, err := session.RecvMSG()
+/usr/local/go/src/runtime/asm_amd64.s:2232 (0x3f591)
+	goexit: 
+
