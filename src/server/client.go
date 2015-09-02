@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
 	"lanstonetech.com/common"
+	// "lanstonetech.com/network"
 	"net"
 )
 
@@ -28,18 +31,37 @@ func main() {
 		common.WriteUint32(data[pos:pos+4], uint32(1))
 		pos += 4
 
-		c, err := conn.Write(data[0:pos])
+		_, err := conn.Write(data[0:pos])
 		if err != nil {
 			fmt.Printf("net.Write err=%v\n", err)
 			return
 		}
 
-		c, err = conn.Read(data)
+		c, err := io.ReadAtLeast(conn, data, 16)
 		if err != nil {
-			fmt.Printf("net.Read err=%v\n", err)
+			fmt.Printf("err=%v\n", err)
 			return
 		}
 
-		fmt.Printf("data=%v len=%v\n", data[0:c], c)
+		fmt.Printf("header=%v\n", data[0:c])
+
+		// header := network.ParseHeader(data[0:common.PACKET_HEAD_LEN])
+		//
+		// _, err = conn.Read(data[0:header.MsgLen])
+		// if err != nil {
+		// 	fmt.Printf("err=%v\n", err)
+		// 	return
+		// }
+		result, err := ioutil.ReadAll(conn)
+		if err != nil {
+			fmt.Printf("err=%v\n", err)
+			return
+		}
+		fmt.Printf("result=%v\n", string(result))
+
+		// fmt.Printf("header=%#v\n", header)
+		// fmt.Printf("data=%v len=%v\n", data[0:c], c)
+
+		conn.Close()
 	}
 }

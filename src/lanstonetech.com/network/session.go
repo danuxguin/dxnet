@@ -26,6 +26,10 @@ func (this *Session) RecvMSG() (*Message, error) {
 	if err != nil {
 		return nil, err
 	}
+	// _, err := io.ReadAtLeast(this.conn, Data, common.PACKET_HEAD_LEN)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	message := NewMessage()
 	header := ParseHeader(Data[0:common.PACKET_HEAD_LEN])
@@ -49,7 +53,21 @@ func (this *Session) RecvMSG() (*Message, error) {
 func (this *Session) SendMSG(msg *Message) error {
 	//加密
 	//压缩
-	_, err := this.conn.Write(msg.Data)
+	Data := make([]byte, MAX_PACKAGE_LEN)
+
+	pos := 0
+	common.WriteUint32(Data[pos:pos+4], msg.MsgHeader.MsgID)
+	pos += 4
+	common.WriteUint32(Data[pos:pos+4], msg.MsgHeader.MsgVer)
+	pos += 4
+	common.WriteUint32(Data[pos:pos+4], msg.MsgHeader.MsgLen)
+	pos += 4
+	common.WriteUint32(Data[pos:pos+4], msg.MsgHeader.MsgCpsLen)
+	pos += 4
+	common.WriteUint32(Data[pos:pos+4], uint32(100))
+	pos += 4
+
+	_, err := this.conn.Write(Data[0:20])
 	return err
 }
 
