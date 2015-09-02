@@ -2,6 +2,7 @@ package network
 
 import (
 	"fmt"
+	// "lanstonetech.com/common"
 	"sync"
 )
 
@@ -30,14 +31,15 @@ func (this *Dispatcher) DelHandler(id uint32, handler PacketHandler) {
 	delete(this.handlerMap, id)
 }
 
-func (this *Dispatcher) Handle(id uint32, session *Session, message *Message) int {
+func (this *Dispatcher) Handle(session *Session, message *Message) int {
 	this.rwlock.RLock()
 	defer this.rwlock.RUnlock()
+
 	for k, v := range this.handlerMap {
-		fmt.Printf("k=%v v=%#v", k, v)
+		fmt.Printf("k=%v v=%v\n", k, v)
 	}
 
-	h, ok := this.handlerMap[id]
+	h, ok := this.handlerMap[message.MsgHeader.MsgID]
 	if ok {
 		return h(session, message)
 	} else {

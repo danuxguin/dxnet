@@ -11,9 +11,8 @@ func ProcessMessage(session *network.Session, message *network.Message) {
 }
 
 func TestHandler(session *network.Session, message *network.Message) int {
-	logger.Infof("message=%#v\n", message)
-
+	logger.Infof("TestHandler======================")
 	session.SendMSG(message)
 
-	return 1
+	return network.MESSAGE_DISCONNECT
 }

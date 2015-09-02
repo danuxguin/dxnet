@@ -2,10 +2,8 @@ package server
 
 import (
 	// "fmt"
-	"lanstonetech.com/common"
 	"lanstonetech.com/common/logger"
 	"lanstonetech.com/network"
-	"lanstonetech.com/packet"
 	"net"
 	"time"
 )
@@ -73,49 +71,25 @@ func (this *server) handlerConnection(conn *net.TCPConn) {
 			return
 		}
 
-		if len(msg) == 0 {
-			continue
-		}
-
-		ret := this.ProcessMessages(session, msg)
+		ret := this.ProcessMessage(session, msg)
 		if ret == false {
 			return
 		}
 	}
 }
 
-func (this *server) ProcessMessages(session *network.Session, msg []byte) bool {
-	header := this.ParseHeader(msg[:16])
-	message, err := network.NewMessage(msg[16:32])
-
-	if err != nil {
-		logger.Infof("Err=%v", err)
-		return false
-	}
-
-	ret := this.Dispatcher.Handle(header.MsgID, session, message)
+func (this *server) ProcessMessage(session *network.Session, message *network.Message) bool {
+	ret := this.Dispatcher.Handle(session, message)
 	switch ret {
-	case 0:
+	case network.MESSAGE_CONTINUE:
 		return true
-	case 1:
+	case network.MESSAGE_BREAK:
+		return true
+	case network.MESSAGE_DISCONNECT:
+		return false
+	case network.MESSAGE_ERROR:
 		return false
 	}
 
 	return true
-}
-
-func (this *server) ParseHeader(head []byte) packet.MsgHeader {
-	var header packet.MsgHeader
-	pos := 0
-
-	header.MsgID = common.ReadUint32(head[pos : pos+4])
-	pos += 4
-	header.MsgVer = common.ReadUint32(head[pos : pos+4])
-	pos += 4
-	header.MsgLen = common.ReadUint32(head[pos : pos+4])
-	pos += 4
-	header.MsgCpsLen = common.ReadUint32(head[pos : pos+4])
-	pos += 4
-
-	return header
 }

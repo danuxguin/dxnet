@@ -19,13 +19,13 @@ func main() {
 		pos := 0
 		common.WriteUint32(data[pos:pos+4], uint32(1001))
 		pos += 4
-		common.WriteUint32(data[pos:pos+4], uint32(1001))
+		common.WriteUint32(data[pos:pos+4], uint32(4))
 		pos += 4
-		common.WriteUint32(data[pos:pos+4], uint32(1001))
+		common.WriteUint32(data[pos:pos+4], uint32(4))
 		pos += 4
-		common.WriteUint32(data[pos:pos+4], uint32(1001))
+		common.WriteUint32(data[pos:pos+4], uint32(4))
 		pos += 4
-		common.WriteUint32(data[pos:pos+4], uint32(1001))
+		common.WriteUint32(data[pos:pos+4], uint32(1))
 		pos += 4
 
 		c, err := conn.Write(data[0:pos])
@@ -33,8 +33,6 @@ func main() {
 			fmt.Printf("net.Write err=%v\n", err)
 			return
 		}
-
-		fmt.Printf("write data=%v len=%v\n", "hello world", c)
 
 		c, err = conn.Read(data)
 		if err != nil {
