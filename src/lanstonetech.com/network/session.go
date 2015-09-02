@@ -1,7 +1,7 @@
 package network
 
 import (
-	"io"
+	// "io"
 	"net"
 )
 
@@ -22,7 +22,7 @@ func (this *Session) RecvMSG() ([]byte, error) {
 	// msg.Data = make([]byte, MAX_PACKAGE_LEN)
 	Data := make([]byte, MAX_PACKAGE_LEN)
 
-	_, err := io.ReadFull(this.conn, Data)
+	_, err := this.conn.Read(Data)
 	if err != nil {
 		return nil, err
 	}
@@ -42,5 +42,5 @@ func (this *Session) SendMSG(msg *Message) error {
 }
 
 func (this *Session) Close() {
-
+	defer this.conn.Close()
 }

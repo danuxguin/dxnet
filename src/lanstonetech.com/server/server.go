@@ -1,7 +1,7 @@
 package server
 
 import (
-	"fmt"
+	// "fmt"
 	"lanstonetech.com/common"
 	"lanstonetech.com/common/logger"
 	"lanstonetech.com/network"
@@ -11,13 +11,17 @@ import (
 )
 
 type server struct {
+	*network.Dispatcher
 }
 
 var Server server
 
-func (this *server) InitPacketHandler() {
-	dispatcher := network.NewDispatcher()
-	dispatcher.AddHandler(1001, TestHandler)
+func init() {
+	Server.Dispatcher = network.NewDispatcher()
+}
+
+func InitPacketHandler() {
+	Server.Dispatcher.AddHandler(1001, TestHandler)
 }
 
 func OnRun(cmd []string) {
@@ -26,8 +30,10 @@ func OnRun(cmd []string) {
 
 	logger.Infof("OnRun")
 
+	InitPacketHandler()
+
 	//执行循环
-	listen, err := net.ListenTCP("tcp", &net.TCPAddr{net.ParseIP("127.0.0.1"), 10001, ""})
+	listen, err := net.ListenTCP("tcp", &net.TCPAddr{net.ParseIP("123.57.81.38"), 10001, ""})
 	if err != nil {
 		panic(err)
 	}
@@ -61,7 +67,6 @@ func (this *server) handlerConnection(conn *net.TCPConn) {
 	defer session.Close()
 
 	for {
-
 		msg, err := session.RecvMSG()
 		if err != nil {
 			logger.Infof("RecvMsgs IP=%s err=%v", conn.RemoteAddr(), err.Error())
@@ -80,14 +85,15 @@ func (this *server) handlerConnection(conn *net.TCPConn) {
 }
 
 func (this *server) ProcessMessages(session *network.Session, msg []byte) bool {
-	header := this.ParseHeader(msg[:32])
-	message, err := network.NewMessage(msg[32:])
+	header := this.ParseHeader(msg[:16])
+	message, err := network.NewMessage(msg[16:32])
+
 	if err != nil {
-		fmt.Printf("Err: %v\n", err)
+		logger.Infof("Err=%v", err)
 		return false
 	}
 
-	ret := network.Dispatcher.Handle(header.MsgID, session, message)
+	ret := this.Dispatcher.Handle(header.MsgID, session, message)
 	switch ret {
 	case 0:
 		return true

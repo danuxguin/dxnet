@@ -16,7 +16,8 @@ func NewMessage(message []byte) (*Message, error) {
 	if len(message) > MAX_PACKAGE_LEN {
 		return nil, errors.New("Message is too big")
 	}
-	var msg *Message
+	msg := new(Message)
+	msg.Data = make([]byte, len(message))
 	msg.Data = message
 
 	return msg, nil
