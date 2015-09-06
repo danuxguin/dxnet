@@ -4,6 +4,7 @@ import (
 	// "fmt"
 	"lanstonetech.com/common/logger"
 	"lanstonetech.com/network"
+	"lanstonetech.com/system/config"
 	"net"
 	"time"
 )
@@ -31,7 +32,8 @@ func OnRun(cmd []string) {
 	InitPacketHandler()
 
 	//执行循环
-	listen, err := net.ListenTCP("tcp", &net.TCPAddr{net.ParseIP("123.57.81.38"), 10001, ""})
+	logger.Infof("ip = %v port = %v", config.SERVER_IP, config.SERVER_PORT)
+	listen, err := net.ListenTCP("tcp", &net.TCPAddr{net.ParseIP(config.SERVER_IP), config.SERVER_PORT, ""})
 	if err != nil {
 		panic(err)
 	}

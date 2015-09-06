@@ -5,14 +5,16 @@ import (
 	"io"
 	"io/ioutil"
 	"lanstonetech.com/common"
-	// "lanstonetech.com/network"
+	"lanstonetech.com/common/logger"
+	"lanstonetech.com/system/config"
 	"net"
 )
 
 func main() {
-	conn, err := net.Dial("tcp", "123.57.81.38:10001")
+
+	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%d", config.SERVER_IP, config.SERVER_PORT))
 	if err != nil {
-		fmt.Printf("net.Dial err=%v\n", err)
+		logger.Errorf("net.Dial err=%v server_ip_port = %v", err, fmt.Sprintf("%s:%s", config.SERVER_IP, config.SERVER_PORT))
 		return
 	}
 
